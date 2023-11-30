@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 
+import javax.management.Query;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,6 +32,7 @@ public class Configuration {
     private final List<String> qualifiableParameterNames;
     private boolean globalOutputPath;
     private String odgFileName;
+    private boolean openPartitionQueryTest;
 
     /**
      * Initializes the default configuration
@@ -125,6 +127,13 @@ public class Configuration {
 
     public void setApiUnderTest(String apiUnderTest) {
         this.apiUnderTest = apiUnderTest;
+    }
+    public boolean isOpenPartitionQueryTest() {
+        return openPartitionQueryTest;
+    }
+
+    public void setOpenPartitionQueryTest(boolean openPartitionQueryTest) {
+        this.openPartitionQueryTest = openPartitionQueryTest;
     }
 
     public static Configuration defaultConfiguration() {

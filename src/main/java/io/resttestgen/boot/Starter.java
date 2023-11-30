@@ -23,6 +23,7 @@ public class Starter {
     /**
      * Starts RestTestGen with the provided configuration. The API under test and the strategy are chosen according to
      * the configuration
+     *
      * @param configuration the configuration.
      */
     public static void start(Configuration configuration) throws CannotParseOpenApiException, IOException {
@@ -31,6 +32,10 @@ public class Starter {
     }
 
 
+    public static void startForPartitionQueryTest(Configuration configuration) throws CannotParseOpenApiException, IOException {
+        initEnvironmentForPartitionQueryTest(configuration);
+        launchStrategyByClassName(configuration.getStrategyClassName());
+    }
 
 
     public static void start(Configuration configuration, ApiUnderTest apiUnderTest, Strategy strategy) throws CannotParseOpenApiException {
@@ -54,9 +59,6 @@ public class Starter {
     }
 
 
-
-
-
     public static void start(ApiUnderTest apiUnderTest, Strategy strategy) throws CannotParseOpenApiException {
         initEnvironment(apiUnderTest);
         launchStrategyByClass(strategy);
@@ -78,14 +80,18 @@ public class Starter {
     }
 
 
-
-
-
     public static Environment initEnvironment(Configuration configuration) throws IOException, CannotParseOpenApiException {
         ApiUnderTest apiUnderTest = ApiUnderTest.loadApiFromFile(configuration.getApiUnderTest());
         logApiName(apiUnderTest);
         resetBeforeTestingIfSpecifiedInApiConfig(apiUnderTest);
         return Environment.getInstance().reset().setUp(configuration, apiUnderTest);
+    }
+
+    private static Environment initEnvironmentForPartitionQueryTest(Configuration configuration) throws IOException, CannotParseOpenApiException {
+        ApiUnderTest apiUnderTest = ApiUnderTest.loadApiFromFile(configuration.getApiUnderTest());
+        logApiName(apiUnderTest);
+        resetBeforeTestingIfSpecifiedInApiConfig(apiUnderTest);
+        return Environment.getInstance().reset().setUpForPartitionQueryTest(configuration, apiUnderTest);
     }
 
     public static Environment initEnvironment(Configuration configuration, ApiUnderTest apiUnderTest) throws CannotParseOpenApiException {
@@ -121,12 +127,9 @@ public class Starter {
     }
 
 
-
-
-
-
     /**
      * Searches for the Strategy class by its name using reflection, and launches it.
+     *
      * @param strategyClassName the name of the strategy class.
      */
     private static void launchStrategyByClassName(String strategyClassName) {
@@ -147,6 +150,7 @@ public class Starter {
 
     /**
      * Launches a strategy by calling its method start().
+     *
      * @param strategy the strategy to launch.
      */
     private static void launchStrategyByClass(Strategy strategy) {
@@ -155,6 +159,7 @@ public class Starter {
 
     /**
      * Resets the API before testing, if specified so in the API configuration.
+     *
      * @param apiUnderTest the API under test.
      */
     private static void resetBeforeTestingIfSpecifiedInApiConfig(ApiUnderTest apiUnderTest) {

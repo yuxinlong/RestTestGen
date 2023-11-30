@@ -8,6 +8,7 @@ import io.resttestgen.core.helper.ExtendedRandom;
 import io.resttestgen.core.openapi.CannotParseOpenApiException;
 import io.resttestgen.core.openapi.OpenApi;
 import io.resttestgen.core.openapi.OpenApiParser;
+import io.resttestgen.core.operationCollection.OperationCollection;
 import io.resttestgen.core.operationdependencygraph.OperationDependencyGraph;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +31,7 @@ public class Environment {
     private OperationDependencyGraph operationDependencyGraph;
     private Dictionary globalDictionary;
     private ExtendedRandom random;
+    private OperationCollection operationCollection;
 
     private Environment() {}
 
@@ -48,6 +50,18 @@ public class Environment {
         this.apiUnderTest = apiUnderTest;
         this.openAPI = new OpenApiParser(apiUnderTest).parse();
         this.operationDependencyGraph = new OperationDependencyGraph(openAPI);
+        this.globalDictionary = new Dictionary();
+        this.random = new ExtendedRandom();
+
+        return this;
+    }
+    public Environment setUpForPartitionQueryTest(@NotNull Configuration configuration, @NotNull ApiUnderTest apiUnderTest) throws CannotParseOpenApiException {
+        this.configuration = configuration;
+        this.apiUnderTest = apiUnderTest;
+        NormalizedParameterName.setQualifiableNames(configuration.getQualifiableParameterNames());
+        this.apiUnderTest = apiUnderTest;
+        this.openAPI = new OpenApiParser(apiUnderTest).parse();
+        this.operationCollection = new OperationCollection(openAPI);
         this.globalDictionary = new Dictionary();
         this.random = new ExtendedRandom();
 

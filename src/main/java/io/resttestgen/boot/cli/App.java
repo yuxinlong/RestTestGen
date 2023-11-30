@@ -53,7 +53,11 @@ public class App {
 
         // Start RestTestGen using the starter class
         try {
-            Starter.start(configuration);
+            if(configuration.isOpenPartitionQueryTest()){
+                Starter.startForPartitionQueryTest(configuration);
+            }else {
+                Starter.start(configuration);
+            }
         } catch (CannotParseOpenApiException e) {
             logger.error("Cannot parse the provided OpenAPI specification.");
             System.exit(-1);
@@ -108,6 +112,9 @@ public class App {
 
         if (cmd.hasOption("-s")) {
             configuration.setStrategyClassName(cmd.valueOf("-s"));
+        }
+        if(cmd.hasOption("-q")){
+            configuration.setOpenPartitionQueryTest(true);
         }
     }
 }
