@@ -44,3 +44,5 @@ jar {
         attributes 'Main-Class': 'io.resttestgen.boot.cli.App'
     }
 }
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11

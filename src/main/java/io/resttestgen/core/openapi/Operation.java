@@ -32,6 +32,7 @@ public class Operation {
     private final String endpoint;
     private final HttpMethod method;
     private final String operationId;
+    private final Boolean hasFilter;
 
     private final String description;
     private final String summary;
@@ -116,6 +117,7 @@ public class Operation {
 
         operationId = OpenApiParser.safeGet(operationMap, "operationId", String.class);
         description = OpenApiParser.safeGet(operationMap, "description", String.class);
+        hasFilter = OpenApiParser.safeGet(operationMap,"x-has-filter", Boolean.class);
         summary = OpenApiParser.safeGet(operationMap, "summary", String.class);
 
         // Check for header/path/query parameters
@@ -246,6 +248,7 @@ public class Operation {
         method = HttpMethod.getMethod(other.method.toString());
         operationId = other.operationId;
         description = other.description;
+        hasFilter = other.hasFilter;
         summary = other.summary;
         rulesToValidate = new HashSet<>(other.rulesToValidate);
 
@@ -283,6 +286,9 @@ public class Operation {
 
     public HttpMethod getMethod() {
         return method;
+    }
+    public Boolean getHasFilter() {
+        return hasFilter;
     }
 
     public String getOperationId() {

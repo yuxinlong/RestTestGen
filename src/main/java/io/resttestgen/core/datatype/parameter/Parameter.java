@@ -44,9 +44,11 @@ public abstract class Parameter extends Taggable {
     protected Set<Object> examples = new HashSet<>();
 
     private String description;
+    private Boolean isFilter;
 
     private Operation operation; // Operation to which the parameter is associated
     private Parameter parent; // Reference to the parent Parameter if any; else null
+
 
     private static final String castedWarn = "' was not compliant to parameter type, but it has been " +
             "cast to fit the right type.";
@@ -95,6 +97,7 @@ public abstract class Parameter extends Taggable {
         this.format = ParameterTypeFormat.getFormatFromString((String) sourceMap.get("format"));
 
         this.description = OpenApiParser.safeGet(parameterMap, "description", String.class);
+        this.isFilter = OpenApiParser.safeGet(parameterMap, "x-is-filter", Boolean.class);
 
         setDefaultValue(sourceMap.get("default"));
 
@@ -177,13 +180,15 @@ public abstract class Parameter extends Taggable {
         tags.addAll(other.tags);
     }
 
-    public Parameter() {}
+    public Parameter() {
+    }
 
     public abstract Collection<Parameter> getChildren();
 
 
     /**
      * This function adds a child to a parameter if it is more than a simple parameter
+     *
      * @param parameter to add
      * @return true if the child is added
      */
@@ -191,6 +196,7 @@ public abstract class Parameter extends Taggable {
 
     /**
      * This function removes a child from a parameter if it is more than a simple parameter
+     *
      * @param parameter to add
      * @return true if the child is removed
      */
@@ -198,6 +204,7 @@ public abstract class Parameter extends Taggable {
 
     /**
      * this method is provided in order to implement the visitor pattern
+     *
      * @param visitor that will visit the parameter
      * @return the output from the visitor interface
      */
@@ -214,6 +221,7 @@ public abstract class Parameter extends Taggable {
 
     /**
      * To replace a parameter with another one.
+     *
      * @param newParameter the new parameter to put.
      * @return true if the replacement could be completed.
      */
@@ -243,7 +251,7 @@ public abstract class Parameter extends Taggable {
                             return true;
                         }
                     } else {
-                        for (String code: operation.getOutputParameters().keySet()) {
+                        for (String code : operation.getOutputParameters().keySet()) {
                             StructuredParameter element = operation.getOutputParameters().get(code);
                             if (element == this && newParameter instanceof StructuredParameter) {
                                 operation.putOutputParameter(code, (StructuredParameter) newParameter);
@@ -266,6 +274,7 @@ public abstract class Parameter extends Taggable {
      * Function to check whether the object passed as parameter is compliant to the Parameter type.
      * Each Parameter subclass implements it checking the type against the one that it expects for its
      * values/enum values/examples/etc.
+     *
      * @param o The object to be checked for compliance
      * @return True if o is compliant to the Parameter; false otherwise
      */
@@ -281,12 +290,14 @@ public abstract class Parameter extends Taggable {
 
     /**
      * Method to get the parameter as a JSON string. It can be used to construct JSON request bodies.
+     *
      * @return the JSON string.
      */
     public abstract String getJSONString();
 
     /**
      * Returns the JSON path for the element, e.g., owner.name
+     *
      * @return the JSON path for the element, e.g., owner.name
      */
     public abstract String getJsonPath();
@@ -303,27 +314,30 @@ public abstract class Parameter extends Taggable {
 
     /**
      * Function to retrieve the value of a Parameter as a string accordingly to given style and explode
-     * @param style Describes how the parameter value will be serialized depending on the type of the parameter value
+     *
+     * @param style   Describes how the parameter value will be serialized depending on the type of the parameter value
      * @param explode Parameter to change the way a specific style is rendered
      * @return A string with the rendered value
      */
-    public abstract String getValueAsFormattedString (ParameterStyle style, boolean explode);
+    public abstract String getValueAsFormattedString(ParameterStyle style, boolean explode);
 
     /**
      * Shorthand for getValueAsFormattedString where the value of 'explode' is the same of the instance one.
+     *
      * @param style the style to be used for the rendering.
      * @return a string with the rendered value.
      */
-    public String getValueAsFormattedString (ParameterStyle style) {
+    public String getValueAsFormattedString(ParameterStyle style) {
         return getValueAsFormattedString(style, explode);
     }
 
     /**
      * Shorthand for getValueAsFormattedString where the values of 'style' and 'explode' are the ones of the instance.
      * This function can be used to get the default rendering of a Parameter.
+     *
      * @return A string with the rendered value
      */
-    public String getValueAsFormattedString () {
+    public String getValueAsFormattedString() {
         return getValueAsFormattedString(this.style, this.explode);
     }
 
@@ -447,7 +461,9 @@ public abstract class Parameter extends Taggable {
         return Collections.unmodifiableSet(examples);
     }
 
-    public ParameterType getType() { return type; }
+    public ParameterType getType() {
+        return type;
+    }
 
     public ParameterTypeFormat getFormat() {
         return format;
@@ -465,6 +481,7 @@ public abstract class Parameter extends Taggable {
     /**
      * Sets the operation, it should be overriden in more complex parameters
      * classes in order to have consistent updates and or propagate it to the children
+     *
      * @param operation to assign this parameter to
      */
     public void setOperation(Operation operation) {
@@ -536,6 +553,7 @@ public abstract class Parameter extends Taggable {
     /**
      * Returns the root element of a structured parameter. If a parameter is not structured, then the root element is
      * itself.
+     *
      * @return the root element of a structured parameter.
      */
     public Parameter getRoot() {
@@ -570,12 +588,14 @@ public abstract class Parameter extends Taggable {
 
     /**
      * Clones the parameter by creating its exact, deep copy
+     *
      * @return deep copy of the parameter
      */
     public abstract Parameter deepClone();
 
     /**
      * Returns all parameters elements of this element.
+     *
      * @return all parameters elements of this element.
      */
     public abstract Collection<Parameter> getAllParameters();

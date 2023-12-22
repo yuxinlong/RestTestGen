@@ -34,7 +34,8 @@ public class NominalFuzzer extends Fuzzer {
 
     private final Operation operation;
     private Operation editableOperation;
-    private ParameterValueProvider parameterValueProvider = ParameterValueProviderCachedFactory.getParameterValueProvider(ParameterValueProviderType.ENUM_AND_EXAMPLE_PRIORITY);
+    private ParameterValueProvider parameterValueProvider =
+            ParameterValueProviderCachedFactory.getParameterValueProvider(ParameterValueProviderType.ENUM_AND_EXAMPLE_PRIORITY);
     private boolean strict = false;
 
     public final int PROBABILITY_TO_KEEP_A_NON_REQUIRED_LEAF = 10;
