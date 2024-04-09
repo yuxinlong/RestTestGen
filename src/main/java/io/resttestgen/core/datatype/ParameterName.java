@@ -14,7 +14,9 @@ public class ParameterName {
     public ParameterName(String parameterName) {
         this.parameterName = parameterName.trim();
     }
-
+    public String getParameterName() {
+        return parameterName;
+    }
     private ParameterName(ParameterName other) {
         parameterName = other.parameterName;
     }

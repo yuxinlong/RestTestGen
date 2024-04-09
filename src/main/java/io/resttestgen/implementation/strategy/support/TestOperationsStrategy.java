@@ -17,7 +17,6 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class TestOperationsStrategy extends Strategy {
     private static final Logger logger = LogManager.getLogger(NominalAndErrorStrategy.class);
-
     private static final List<Operation> testedOperations = new LinkedList<>();
     private static final List<Operation> untestedOperations = new LinkedList<>();
 

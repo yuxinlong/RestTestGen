@@ -1,5 +1,7 @@
 package io.resttestgen.core;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import io.resttestgen.boot.ApiUnderTest;
 import io.resttestgen.boot.Configuration;
 import io.resttestgen.core.datatype.NormalizedParameterName;
@@ -13,6 +15,12 @@ import io.resttestgen.core.operationdependencygraph.OperationDependencyGraph;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.FileReader;
+import java.lang.reflect.Type;
+import java.net.URL;
+import java.util.Map;
 
 /**
  * A container class for all the test environment components of the RestTestGen Core, such as the parsed specification,
@@ -32,6 +40,12 @@ public class Environment {
     private Dictionary globalDictionary;
     private ExtendedRandom random;
     private OperationCollection operationCollection;
+
+    public Map<String, Object> getDictionaryMap() {
+        return dictionaryMap;
+    }
+
+    private Map<String,Object> dictionaryMap;
 
     private Environment() {}
 
@@ -64,8 +78,25 @@ public class Environment {
         this.operationCollection = new OperationCollection(openAPI);
         this.globalDictionary = new Dictionary();
         this.random = new ExtendedRandom();
+        this.dictionaryMap = loadDictionaryMap(configuration.getApiUnderTest());
 
         return this;
+    }
+
+    private Map<String, Object> loadDictionaryMap(String apiUnderTest) {
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL resourceUrl = classLoader.getResource(apiUnderTest.toLowerCase() + "_dictionary.json");
+        Gson gson = new Gson();
+        if (resourceUrl != null) {
+            File file = new File(resourceUrl.getFile());
+            try (FileReader fileReader = new FileReader(file)){
+                Type type = TypeToken.getParameterized(Map.class,String.class,Object.class).getType();
+                return gson.fromJson(fileReader,type);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     public static Environment getInstance() {

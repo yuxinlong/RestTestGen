@@ -117,7 +117,11 @@ public class Operation {
 
         operationId = OpenApiParser.safeGet(operationMap, "operationId", String.class);
         description = OpenApiParser.safeGet(operationMap, "description", String.class);
-        hasFilter = OpenApiParser.safeGet(operationMap,"x-has-filter", Boolean.class);
+        if(operationMap.containsKey("x-has-filter")){
+            hasFilter = OpenApiParser.safeGet(operationMap,"x-has-filter", Boolean.class);
+        }else{
+            hasFilter = false;
+        }
         summary = OpenApiParser.safeGet(operationMap, "summary", String.class);
 
         // Check for header/path/query parameters
@@ -278,6 +282,14 @@ public class Operation {
         other.zeroOrOne.forEach(s -> zeroOrOne.add(s.stream().map(ParameterName::deepClone).collect(Collectors.toSet())));
 
         isReadOnly = false;
+    }
+
+    public Operation setLeaveValue(Object value,String paramName){
+        List<LeafParameter> leafParameters = new ArrayList<>(this.getLeaves());
+        leafParameters.stream().filter(p ->{
+            return p.getName().getParameterName().equals(paramName);
+        }).collect(Collectors.toList()).get(0).setValue(value);
+        return this;
     }
 
     public String getEndpoint() {

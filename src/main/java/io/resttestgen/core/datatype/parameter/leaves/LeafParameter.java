@@ -23,11 +23,14 @@ import java.util.Set;
 
 public abstract class LeafParameter extends Parameter {
     private static final Logger logger = LogManager.getLogger(LeafParameter.class);
-
     protected Object value;
     protected ParameterValueProvider valueSource = null;
     protected boolean resourceIdentifier = false;
     protected boolean inferredResourceIdentifier = false;
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
 
     public LeafParameter(Map<String, Object> parameterMap, String name) {
         super(parameterMap, name);
@@ -322,5 +325,8 @@ public abstract class LeafParameter extends Parameter {
             // Missing parenthesis
             return null;
         }
+    }
+    public void setSubSetMetamorphicValue(){
+
     }
 }

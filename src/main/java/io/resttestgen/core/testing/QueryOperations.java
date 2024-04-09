@@ -6,15 +6,15 @@ import io.resttestgen.core.openapi.OpenApi;
 import io.resttestgen.core.openapi.Operation;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class QueryOperations {
 
-    private List<Operation> queryOperationsWithoutFilter = new ArrayList<>();
-    private List<Operation> queryOperationsWithFilter = new ArrayList<>();
+    private LinkedList<Operation> queryOperationsWithoutFilter = new LinkedList<>();
+    private LinkedList<Operation> queryOperationsWithFilter = new LinkedList<>();
 
-    //获取api中的查询接口并且分离具有和不具有过滤字段的查询接口
     public void initQueryOperations(Environment environment){
         OpenApi openApi = environment.getOpenAPI();
         List<Operation> queryOperation = openApi.getOperations().stream()
@@ -28,19 +28,19 @@ public class QueryOperations {
         }
     }
 
-    public List<Operation> getQueryOperationsWithoutFilter() {
+    public LinkedList<Operation> getQueryOperationsWithoutFilter() {
         return queryOperationsWithoutFilter;
     }
 
-    public void setQueryOperationsWithoutFilter(List<Operation> queryOperationsWithoutFilter) {
+    public void setQueryOperationsWithoutFilter(LinkedList<Operation> queryOperationsWithoutFilter) {
         this.queryOperationsWithoutFilter = queryOperationsWithoutFilter;
     }
 
-    public List<Operation> getQueryOperationsWithFilter() {
+    public LinkedList<Operation> getQueryOperationsWithFilter() {
         return queryOperationsWithFilter;
     }
 
-    public void setQueryOperationsWithFilter(List<Operation> queryOperationsWithFilter) {
+    public void setQueryOperationsWithFilter(LinkedList<Operation> queryOperationsWithFilter) {
         this.queryOperationsWithFilter = queryOperationsWithFilter;
     }
 

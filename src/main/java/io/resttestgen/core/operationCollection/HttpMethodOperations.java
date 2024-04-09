@@ -83,7 +83,7 @@ public class HttpMethodOperations {
                 this.patchOperations.add(operation);
                 break;
             default:
-                logger.warn("操作:"+operation.getMethod()+"目前不支持分类处理");
+                logger.warn("Operation:"+operation.getMethod()+"Currently, classification processing is not supported");
         }
 
     }

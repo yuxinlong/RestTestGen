@@ -166,7 +166,7 @@ public class ExtendedRandom extends Random {
         String commonChars = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
 
         // Characters that are special, but not rare
-        String specialChars = ".:,;-_#+*'\"?=/\\!$@&%€£<>";
+        String specialChars = ".:,;-_#+*'\"?=/\\!$@&%£<>";
 
         // Characters that are rare
         String rareChars = "àèìòùéç§°^|";

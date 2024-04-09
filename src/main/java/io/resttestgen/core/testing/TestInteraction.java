@@ -1,14 +1,20 @@
 package io.resttestgen.core.testing;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.jayway.jsonpath.internal.filter.ValueNodes;
 import io.resttestgen.core.Environment;
 import io.resttestgen.core.datatype.HttpMethod;
 import io.resttestgen.core.datatype.HttpStatusCode;
 import io.resttestgen.core.helper.Taggable;
+import io.resttestgen.core.helper.TestInteractionType;
 import io.resttestgen.core.openapi.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.Timestamp;
+import java.util.Map;
 
 /**
  * Represents a single HTTP test interaction (including a request and a response).
@@ -37,6 +43,12 @@ public class TestInteraction extends Taggable {
     private Timestamp executionTime;
     private transient TestStatus testStatus = TestStatus.CREATED;
 
+    public TestInteractionType getType() {
+        return type;
+    }
+
+    private TestInteractionType type;
+
 
     public TestInteraction(Operation referenceOperation, Operation fuzzedOperation) {
         if (referenceOperation != null && referenceOperation.isReadOnly()) {
@@ -49,7 +61,12 @@ public class TestInteraction extends Taggable {
 
     public TestInteraction(Operation fuzzedOperation) {
         this.referenceOperation = Environment.getInstance().getOpenAPI().getReferenceOperationFromFuzzedOperation(fuzzedOperation);
-        this.fuzzedOperation = fuzzedOperation;
+        this.fuzzedOperation = fuzzedOperation.deepClone();
+    }
+    public TestInteraction(Operation fuzzedOperation, TestInteractionType type) {
+        this.referenceOperation = Environment.getInstance().getOpenAPI().getReferenceOperationFromFuzzedOperation(fuzzedOperation);
+        this.fuzzedOperation = fuzzedOperation.deepClone();
+        this.type = type;
     }
 
     public Operation getFuzzedOperation() {
@@ -203,5 +220,41 @@ public class TestInteraction extends Taggable {
     @Override
     public String toString() {
         return fuzzedOperation.toString();
+    }
+
+
+
+    public int getTotalValue(){
+        return findTotalValue(JsonParser.parseString(responseBody));
+    }
+    private int findTotalValue(JsonElement element) {
+        if (element.isJsonObject()) {
+            // 如果是对象，查找包含 "total" 键的部分
+            JsonObject jsonObject = element.getAsJsonObject();
+            if (jsonObject.has("total")) {
+                // 找到 "total" 键，返回其值
+                return jsonObject.get("total").getAsInt();
+            } else {
+                // 如果未找到 "total" 键，继续递归查找子节点
+                for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+                    int result = findTotalValue(entry.getValue());
+                    if (result != -1) {
+                        // 如果找到了 "total" 键，直接返回值
+                        return result;
+                    }
+                }
+            }
+        } else if (element.isJsonArray()) {
+            // 如果是数组，递归查找数组元素
+            for (JsonElement arrayElement : element.getAsJsonArray()) {
+                int result = findTotalValue(arrayElement);
+                if (result != -1) {
+                    // 如果找到了 "total" 键，直接返回值
+                    return result;
+                }
+            }
+        }
+        // 未找到 "total" 键的情况
+        return -1;
     }
 }

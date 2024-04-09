@@ -44,6 +44,7 @@ public abstract class Parameter extends Taggable {
     protected Set<Object> examples = new HashSet<>();
 
     private String description;
+
     private Boolean isFilter;
 
     private Operation operation; // Operation to which the parameter is associated
@@ -54,7 +55,9 @@ public abstract class Parameter extends Taggable {
             "cast to fit the right type.";
     private static final String discardedWarn = "' is not compliant to parameter type. The value will be discarded.";
     private static final Logger logger = LogManager.getLogger(Parameter.class);
-
+    public Boolean getFilter() {
+        return isFilter;
+    }
     public Parameter(Map<String, Object> parameterMap, String name) {
         if (name != null) {
             this.name = new ParameterName(name);
@@ -97,7 +100,11 @@ public abstract class Parameter extends Taggable {
         this.format = ParameterTypeFormat.getFormatFromString((String) sourceMap.get("format"));
 
         this.description = OpenApiParser.safeGet(parameterMap, "description", String.class);
-        this.isFilter = OpenApiParser.safeGet(parameterMap, "x-is-filter", Boolean.class);
+        if(parameterMap.containsKey("x-is-filter")){
+            this.isFilter = OpenApiParser.safeGet(parameterMap, "x-is-filter", Boolean.class);
+        }else {
+            this.isFilter = false;
+        }
 
         setDefaultValue(sourceMap.get("default"));
 
@@ -115,6 +122,7 @@ public abstract class Parameter extends Taggable {
                 }
             }
         });
+
 
         // Example and examples should be mutually exclusive. Moreover, examples field is not allowed in request bodies.
         // The specification is parsed in a more relaxed way, pursuing fault tolerance and flexibility.
@@ -167,6 +175,7 @@ public abstract class Parameter extends Taggable {
         style = other.style;
         explode = other.explode;
         type = other.type;
+        isFilter = other.isFilter;
 
         description = other.description;
 

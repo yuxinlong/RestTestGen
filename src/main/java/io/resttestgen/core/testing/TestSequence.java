@@ -5,6 +5,7 @@ import io.resttestgen.core.datatype.parameter.Parameter;
 import io.resttestgen.core.datatype.parameter.leaves.LeafParameter;
 import io.resttestgen.core.helper.ExtendedRandom;
 import io.resttestgen.core.helper.Taggable;
+import io.resttestgen.core.helper.TestInteractionType;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
@@ -28,6 +29,12 @@ public class TestSequence extends Taggable implements List<TestInteraction> {
 
     // Time information
     private final Timestamp generatedAt;
+
+    public boolean isMetamorphicTestResult() {
+        return metamorphicTestResult;
+    }
+
+    private boolean metamorphicTestResult;
 
     // Outcome
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
@@ -325,5 +332,31 @@ public class TestSequence extends Taggable implements List<TestInteraction> {
     @Override
     public String toString() {
         return testInteractions.toString();
+    }
+
+    public void compareSubSetTestResult(){
+        int source = 0;
+        int subSet = 0;
+        for (TestInteraction testInteraction : this.testInteractions) {
+            if(testInteraction.getType().equals(TestInteractionType.source)){
+                source += testInteraction.getTotalValue();
+            }else if(testInteraction.getType().equals(TestInteractionType.metamorphic)){
+                subSet += testInteraction.getTotalValue();
+            }
+        }
+        this.metamorphicTestResult = source>=subSet;
+    }
+
+    public void comparePartitionTestResult(){
+        int source = 0;
+        int subSet = 0;
+        for (TestInteraction testInteraction : this.testInteractions) {
+            if(testInteraction.getType().equals(TestInteractionType.source)){
+                source += testInteraction.getTotalValue();
+            }else if(testInteraction.getType().equals(TestInteractionType.metamorphic)){
+                subSet += testInteraction.getTotalValue();
+            }
+        }
+        this.metamorphicTestResult = source==subSet;
     }
 }

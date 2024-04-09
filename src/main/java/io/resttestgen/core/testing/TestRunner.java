@@ -165,9 +165,9 @@ public class TestRunner {
                 logger.warn("Execution of test interaction aborted after " + MAX_ATTEMPTS + " attempts.");
             }
         }
-
+        logger.info("TestInteraction:"+testInteraction);
         // Process response if the interaction could be executed correctly
-        processResponse(testInteraction);
+//        processResponse(testInteraction);
     }
 
     /**
