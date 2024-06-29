@@ -1,0 +1,4 @@
+name: Youtube
+authenticationCommands:
+  admin: "python apis/youtube/scripts/drive-auth.py"
+resetCommand: "python apis/spotify/scripts/drive-auth.py"

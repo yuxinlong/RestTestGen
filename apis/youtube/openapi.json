@@ -1,0 +1,246 @@
+{
+  "openapi": "3.0.0",
+  "servers": [
+    {
+      "url": "https://www.googleapis.com/youtube/v3"
+    }
+  ],
+  "info": {
+    "title": "Swagger Google - OpenAPI 3.0",
+    "description": "This is a Youtube search api swagger.",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/search": {
+      "get": {
+        "description": "Get Youtube information about video,playlists,chinnal\n",
+        "operationId": "search",
+        "parameters": [
+          {
+            "name": "part",
+            "in": "query",
+            "description": "A comma-separated list of search resource properties that the API response will include.\nSet the parameter value to 'snippet'.\n",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "snippet"
+            }
+          },
+          {
+            "name": "maxResults",
+            "in": "query",
+            "description": "The maximum number of items that should be returned in the result set.\n",
+            "schema": {
+              "type": "integer",
+              "default": 10000
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Method to sort resources in the API response.\n",
+            "schema": {
+              "items": {
+                "enum": [
+                  "date",
+                  "rating",
+                  "relevance",
+                  "title",
+                  "videoCount",
+                  "viewCount"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "The search terms.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "safeSearch",
+            "in": "query",
+            "description": "Indicate whether search results should include restricted content and standard content simultaneously.\n",
+            "schema": {
+              "items": {
+                "enum": [
+                  "moderate","none","strict"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Limit search query to retrieve only specific types of resources.\n",
+            "schema": {
+              "items": {
+                "enum": [
+                  "channel","playlist","video"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "videoCaption",
+            "in": "query",
+            "description": "Filter search results based on whether the video has captions.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "videoCategoryId",
+            "in": "query",
+            "description": "Filter video search results by category.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "videoDefinition",
+            "in": "query",
+            "description": "Limit search results to include only high definition (HD) or standard definition (SD) videos.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "videoDimension",
+            "in": "query",
+            "description": "Limit search to only 2D or 3D videos.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "videoDuration",
+            "in": "query",
+            "description": "Filter video search results by duration.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "videoEmbeddable",
+            "in": "query",
+            "description": "Limit search results to embeddable videos.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "videoLicense",
+            "in": "query",
+            "description": "Filter search results to include only videos with specific licenses.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "videoPaidProductPlacement",
+            "in": "query",
+            "description": "Filter search results to include only videos with paid product placements.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "videoSyndicated",
+            "in": "query",
+            "description": "Limit search results to syndicated videos.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "videoType",
+            "in": "query",
+            "description": "Limit search results to specific types of videos.\n",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SearchListResponse": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "description": "Identifies the type of API resource. Its value is youtube#searchListResponse."
+          },
+          "etag": {
+            "type": "string",
+            "description": "Etag for this resource."
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Token that can be used as the value of the pageToken parameter to retrieve the next page of results in the result set."
+          },
+          "prevPageToken": {
+            "type": "string",
+            "description": "Token that can be used as the value of the pageToken parameter to retrieve the previous page of results in the result set."
+          },
+          "regionCode": {
+            "type": "string",
+            "description": "The region code that was used for the search query. Its value is a two-letter ISO country/region code. The i18nRegions.list method returns the supported regions list. The default value is US."
+          },
+          "pageInfo": {
+            "type": "object",
+            "properties": {
+              "totalResults": {
+                "type": "integer",
+                "description": "The total number of results in the result set. Note that this value is an approximation and may not represent an exact value. Additionally, the maximum value is 1,000,000."
+              },
+              "resultsPerPage": {
+                "type": "integer",
+                "description": "The number of results included in the API response."
+              }
+            }
+          },
+          "items": {
+            "type": "array",
+            "description": "List of results matching the search criteria.",
+            "items": {
+              "$ref": "#/components/schemas/SearchResource"
+            }
+          }
+        }
+      },
+      "SearchResource": {
+        "type": "object"
+      }
+    }
+  }
+}

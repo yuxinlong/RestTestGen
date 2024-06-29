@@ -1,0 +1,20 @@
+{
+  "order": ["date","rating","relevance","title","videoCount","viewCount"],
+  "safeSearch": ["moderate","none","strict"],
+  "type": ["channel","playlist","video"],
+  "videoCaption": ["any","closedCaption","none"],
+  "videoDefinition": ["any","high","standard"],
+  "videoDimension": ["2d","3d","any"],
+  "videoDuration": ["any","long","medium","short"],
+  "videoType": ["any","episode","movie"],
+  "subset": {
+    "nullOrOne": ["safeSearch"],
+    "oneOrMore": null
+  },
+  "partition": {
+    "complete": "type",
+    "range": null,
+    "rangeFormate": "yyyy-MM-dd HH:mm:ss"
+  },
+  "total": "totalValue"
+}
