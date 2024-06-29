@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.resttestgen.boot.ApiUnderTest;
 import io.resttestgen.boot.Configuration;
+import io.resttestgen.boot.cli.ApiParamConfiguration;
 import io.resttestgen.core.datatype.NormalizedParameterName;
 import io.resttestgen.core.dictionary.Dictionary;
 import io.resttestgen.core.helper.ExtendedRandom;
@@ -45,16 +46,23 @@ public class Environment {
         return dictionaryMap;
     }
 
-    private Map<String,Object> dictionaryMap;
+    public ApiParamConfiguration getApiParamConfiguration() {
+        Map<String, Object> apiParamMap = Environment.getInstance().getDictionaryMap();
+        return new ApiParamConfiguration(apiParamMap);
+    }
 
-    private Environment() {}
+    private Map<String, Object> dictionaryMap;
+
+    private Environment() {
+    }
 
     /**
      * Sets up testing environment given a configuration and an API under test (as class instance).
      * NOTE: the API under test specified in the configuration file as string is ignored, in favour of the ApiUnderTest
      * class instance provided as argument to the method.
+     *
      * @param configuration the configuration.
-     * @param apiUnderTest the API under test.
+     * @param apiUnderTest  the API under test.
      * @throws CannotParseOpenApiException in case the provided specification is invalid.
      */
     public Environment setUp(@NotNull Configuration configuration, @NotNull ApiUnderTest apiUnderTest) throws CannotParseOpenApiException {
@@ -69,6 +77,7 @@ public class Environment {
 
         return this;
     }
+
     public Environment setUpForPartitionQueryTest(@NotNull Configuration configuration, @NotNull ApiUnderTest apiUnderTest) throws CannotParseOpenApiException {
         this.configuration = configuration;
         this.apiUnderTest = apiUnderTest;
@@ -89,10 +98,10 @@ public class Environment {
         Gson gson = new Gson();
         if (resourceUrl != null) {
             File file = new File(resourceUrl.getFile());
-            try (FileReader fileReader = new FileReader(file)){
-                Type type = TypeToken.getParameterized(Map.class,String.class,Object.class).getType();
-                return gson.fromJson(fileReader,type);
-            }catch (Exception e){
+            try (FileReader fileReader = new FileReader(file)) {
+                Type type = TypeToken.getParameterized(Map.class, String.class, Object.class).getType();
+                return gson.fromJson(fileReader, type);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -162,4 +171,4 @@ public class Environment {
         random = null;
         return this;
     }
- }
+}

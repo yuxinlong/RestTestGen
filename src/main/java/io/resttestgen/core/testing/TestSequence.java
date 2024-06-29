@@ -27,6 +27,10 @@ public class TestSequence extends Taggable implements List<TestInteraction> {
     private String name = generateRandomTestSequenceName();
     private List<TestInteraction> testInteractions = new LinkedList<>();
 
+    public List<TestInteraction> getTestInteractions() {
+        return testInteractions;
+    }
+
     // Time information
     private final Timestamp generatedAt;
 

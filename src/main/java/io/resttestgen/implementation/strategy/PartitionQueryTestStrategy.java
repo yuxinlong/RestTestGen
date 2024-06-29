@@ -6,18 +6,16 @@ import io.resttestgen.core.testing.QueryOperations;
 import io.resttestgen.core.testing.Strategy;
 import io.resttestgen.core.testing.TestRunner;
 import io.resttestgen.core.testing.TestSequence;
-import io.resttestgen.implementation.fuzzer.QueryMetamorphicFuzzer;
 import io.resttestgen.implementation.metamorphic.*;
 import io.resttestgen.implementation.oracle.StatusCodeOracle;
-import io.resttestgen.implementation.writer.CoverageReportWriter;
-import io.resttestgen.implementation.writer.MetaMorphicTestResultWriter;
-import io.resttestgen.implementation.writer.ReportWriter;
-import io.resttestgen.implementation.writer.RestAssuredWriter;
+import io.resttestgen.implementation.strategy.testResult.EqualityMetamorphicTestResult;
+import io.resttestgen.implementation.strategy.testResult.PartitionMetamorphicTestResult;
+import io.resttestgen.implementation.strategy.testResult.SubSetMetamorphicTestResult;
+import io.resttestgen.implementation.writer.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,31 +34,54 @@ public class PartitionQueryTestStrategy extends Strategy {
         queryOperations.initQueryOperations(environment);
         LinkedList<Operation> queryOperationsWithFilter = queryOperations.getQueryOperationsWithFilter();
         logger.info("Query Operations:" + queryOperationsWithFilter.toString());
-        List<TestSequence> testSequences = new ArrayList<>();
+        PartitionMetamorphicTestResult partitionMetamorphicTestResult = new PartitionMetamorphicTestResult();
+        SubSetMetamorphicTestResult subSetMetamorphicTestResult = new SubSetMetamorphicTestResult();
+        EqualityMetamorphicTestResult equalityMetamorphicTestResult = new EqualityMetamorphicTestResult();
         while (!queryOperationsWithFilter.isEmpty()) {
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 100; i++) {
                 Operation operationToTest = queryOperationsWithFilter.getFirst();
                 logger.debug("Testing operation " + operationToTest);
-                SubSetMetamorphic subSetMetamorphic = new SubSetMetamorphic(operationToTest);
-                PartitionMetamorphic partitionMetamorphic = new PartitionMetamorphic(operationToTest);
+                QueryMetamorphic subSetMetamorphic = new SubSetMetamorphic(operationToTest);
+                QueryMetamorphic partitionMetamorphic = new PartitionMetamorphic(operationToTest);
+                QueryMetamorphic equalityMetamorphic = new PartitionMetamorphic(operationToTest);
 
-                TestSequence subSetMetamorphicTestSequence = subSetMetamorphic.generateQueryMetamorphicTestSequences();
-                TestSequence partitionMetamorphicTestSequence = partitionMetamorphic.generateQueryMetamorphicTestSequences();
-                if(subSetMetamorphicTestSequence!=null){
-                    runTestSequence(subSetMetamorphicTestSequence);
-                    writeTestResultToFile(subSetMetamorphicTestSequence,TestType.subset);
-                    globalNominalTestSequence.append(subSetMetamorphicTestSequence);
+                try {
+                    TestSequence subSetMetamorphicTestSequence = subSetMetamorphic.generateQueryMetamorphicTestSequences();
+                    TestSequence partitionMetamorphicTestSequence = partitionMetamorphic.generateQueryMetamorphicTestSequences();
+                    TestSequence equalityMetamorphicTestSequence = equalityMetamorphic.generateQueryMetamorphicTestSequences();
+                    if (subSetMetamorphicTestSequence != null) {
+                        runTestSequence(subSetMetamorphicTestSequence);
+                        subSetMetamorphicTestResult.addTestSequence(subSetMetamorphicTestSequence);
+                        writeTestResultToFile(subSetMetamorphicTestSequence, TestType.subset);
+                        globalNominalTestSequence.append(subSetMetamorphicTestSequence);
+                    }
+                    if (partitionMetamorphicTestSequence != null) {
+                        runTestSequence(partitionMetamorphicTestSequence);
+                        partitionMetamorphicTestResult.addTestSequence(partitionMetamorphicTestSequence);
+                        writeTestResultToFile(partitionMetamorphicTestSequence, TestType.partition);
+                        globalNominalTestSequence.append(partitionMetamorphicTestSequence);
+                    }
+                    if(equalityMetamorphicTestSequence!=null){
+                        runTestSequence(equalityMetamorphicTestSequence);
+                        equalityMetamorphicTestResult.addTestSequence(equalityMetamorphicTestSequence);
+                        writeTestResultToFile(equalityMetamorphicTestSequence, TestType.equality);
+                        globalNominalTestSequence.append(equalityMetamorphicTestSequence);
+                    }
+                } catch (Exception e) {
+                    logger.error(String.format("operationToTest: %s has exception:%s", operationToTest.getOperationId(),e));
                 }
-                if(partitionMetamorphicTestSequence!=null){
-                    runTestSequence(partitionMetamorphicTestSequence);
-                    writeTestResultToFile(partitionMetamorphicTestSequence,TestType.partition);
-                    globalNominalTestSequence.append(partitionMetamorphicTestSequence);
-                }
-
             }
+            writeTestErrorResultToFile(partitionMetamorphicTestResult.getErrorTestSequence(),
+                    TestType.partition, queryOperationsWithFilter.getFirst());
+
+            writeTestErrorResultToFile(subSetMetamorphicTestResult.getErrorTestSequence(),
+                    TestType.subset, queryOperationsWithFilter.getFirst());
+            writeTestErrorResultToFile(equalityMetamorphicTestResult.getErrorTestSequence(),
+                    TestType.subset, queryOperationsWithFilter.getFirst());
 
             queryOperationsWithFilter.removeFirst();
         }
+
 
         // Keep only successful test interactions in the sequence
         globalNominalTestSequence.filterBySuccessfulStatusCode();
@@ -97,16 +118,33 @@ public class PartitionQueryTestStrategy extends Strategy {
             e.printStackTrace();
         }
     }
-    public void writeTestResultToFile(TestSequence testSequence,TestType testType){
+
+    public void writeTestResultToFile(TestSequence testSequence, TestType testType) {
         // Write report to file
         try {
             MetaMorphicTestResultWriter metaMorphicTestResultWriter =
-                    new MetaMorphicTestResultWriter(testSequence,testType.name());
+                    new MetaMorphicTestResultWriter(testSequence, testType.name());
             metaMorphicTestResultWriter.write();
         } catch (IOException e) {
-            logger.warn("Could not write report to file.");
+            logger.warn("Could not write report metaMorphicTestResultWriter to file.");
             e.printStackTrace();
         }
     }
+
+    public void writeTestErrorResultToFile(List<TestSequence> testSequences, TestType testType, Operation operation) {
+        for (TestSequence testSequence : testSequences) {
+            // Write report to file
+            try {
+                MetaMorphicTestErrorResultWriter metaMorphicTestErrorResultWriter =
+                        new MetaMorphicTestErrorResultWriter(testSequence, testType.name(), operation.getOperationId());
+                metaMorphicTestErrorResultWriter.write();
+            } catch (IOException e) {
+                logger.warn("Could not write report metaMorphicTestErrorResultWriter to file.");
+                e.printStackTrace();
+            }
+        }
+
+    }
+
 }
 

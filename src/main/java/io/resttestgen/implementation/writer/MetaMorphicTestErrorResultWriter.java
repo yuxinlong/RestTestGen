@@ -9,12 +9,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class MetaMorphicTestResultWriter extends Writer {
+public class MetaMorphicTestErrorResultWriter extends Writer {
     private String metaMorphicTestStrategy;
+    private String operatorName;
 
-    public MetaMorphicTestResultWriter(TestSequence testSequence, String metaMorphicTestStrategy){
+    public MetaMorphicTestErrorResultWriter(TestSequence testSequence, String metaMorphicTestStrategy,String operatorName){
         super(testSequence);
         this.metaMorphicTestStrategy = metaMorphicTestStrategy;
+        this.operatorName = operatorName;
     }
 
     @Override
@@ -24,15 +26,17 @@ public class MetaMorphicTestResultWriter extends Writer {
 
     @Override
     public void write() throws IOException {
-        File file = new File(getMetaMorphicTestResultOutPutPAth(metaMorphicTestStrategy));
+        File file = new File(getMetaMorphicTestErrorResultOutPutPAth(metaMorphicTestStrategy,operatorName));
 
         file.mkdirs();
 
-        FileWriter writer = new FileWriter(getMetaMorphicTestResultOutPutPAth(metaMorphicTestStrategy) +
+        FileWriter writer = new FileWriter(
+                getMetaMorphicTestErrorResultOutPutPAth(metaMorphicTestStrategy,operatorName) +
                 getSuggestedFileName(".json"));
         // Convert map to JSON File
         //new GsonBuilder().setPrettyPrinting().create().toJson(testSequence, writer);
-        new GsonBuilder().registerTypeAdapter(TestSequence.class, new TestSequenceSerializer()).setPrettyPrinting().create().toJson(testSequence,writer);
+        new GsonBuilder().registerTypeAdapter(
+                TestSequence.class, new TestSequenceSerializer()).setPrettyPrinting().create().toJson(testSequence,writer);
 
         // Close the writer
         writer.close();

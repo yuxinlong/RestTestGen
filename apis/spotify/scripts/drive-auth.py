@@ -10,7 +10,7 @@ def main():
         "client_id": "70eb87ccaaae4af88c70caa4ecb6cd91",
         "client_secret": "76e9098cff5045a98eea88aa70ffc218"
     }
-    token = "BQCmKaOkkOLKOOKbu2t-VmB1y6TD3zKjWhokbo9bllRnm59HPayED9tTo15n0hIB3Zo9j_UCFr34kVOxSmyD2izCl0iCSAr83Z54uRZgInwctWW35GM"
+    # token = "BQBeS86QqcviaS6aE0b7AfZROOJQ11j9LR_pUd5ANES_oSDzjq_82frYr2TaF6Wm9ytZwBz5yApCV2VNp0SEdrr6ZsyIxr0ZbG2tQew0xVuhJbBtkR0"
     # 发送 POST 请求
     response = requests.post(url, headers=headers, data=data, proxies={})
     if response.status_code == 200:
@@ -24,7 +24,7 @@ def main():
         "name": "Authorization",
         "value": "Bearer " + token,
         "in": "header",
-        "duration": 600
+        "duration": 3600
     }
 
     print(json.dumps(rtg_info))

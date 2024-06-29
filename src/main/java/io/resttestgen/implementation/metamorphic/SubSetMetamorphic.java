@@ -27,7 +27,7 @@ public class SubSetMetamorphic extends QueryMetamorphic {
     public TestSequence generateQueryMetamorphicTestSequences() {
 
         List<TestInteraction> testInteractions = setValueBySubsetStrategy();
-        if(testInteractions.isEmpty()){
+        if (testInteractions.isEmpty()) {
             return null;
         }
         // Encapsulate test interaction into test sequence
@@ -44,7 +44,7 @@ public class SubSetMetamorphic extends QueryMetamorphic {
         List<TestInteraction> testInteractions = new ArrayList<>();
         List<String> nullOrOneParams = subset.getOrDefault(NULLORONE, null);
         List<String> oneOrMoreParams = subset.getOrDefault(ONEORMORE, null);
-        if ((nullOrOneParams == null || nullOrOneParams.size()<1) && (oneOrMoreParams == null || oneOrMoreParams.size()<1)) {
+        if ((nullOrOneParams == null || nullOrOneParams.size() < 1) && (oneOrMoreParams == null || oneOrMoreParams.size() < 1)) {
             logger.info("No nullOrOneParams And oneOrMoreParams");
             return testInteractions;
         }
@@ -94,21 +94,6 @@ public class SubSetMetamorphic extends QueryMetamorphic {
         return testInteractions;
     }
 
-    public TestSequence generateOriginalQueryMetamorphicTest(Operation operation) {
-        // Create a test interaction from the operation
-        TestInteraction testInteraction = new TestInteraction(operation);
-
-        // Encapsulate test interaction into test sequence
-        TestSequence testSequence = new TestSequence(this, testInteraction);
-        String sequenceName = operation.getOperationId().length() > 0 ?
-                operation.getOperationId() :
-                operation.getMethod().toString() + "-" + operation.getEndpoint();
-        testSequence.setName(sequenceName);
-        testSequence.appendGeneratedAtTimestampToSequenceName();
-        // Create and return test sequence containing the test interaction
-        return testSequence;
-    }
-
     public String generateSourceSetValue(List<String> interParams) {
         StringBuilder sb = new StringBuilder();
         int sourceParamIndex = random.nextInt(interParams.size());
@@ -119,11 +104,24 @@ public class SubSetMetamorphic extends QueryMetamorphic {
         return sb.toString();
     }
 
-    public String generateSubSetValue(List<String> interParams, String sourceParam) {
+    public String generateSubSetValueByAddRandomValue(String sourceParam) {
+        String randomString = random.nextRandomString(random.nextInt(1, 3));
+        return sourceParam + randomString;
+    }
+
+    public String generateSubSetValueByAddMoreParam(List<String> interParams, String sourceParam) {
         StringBuilder sb = new StringBuilder(sourceParam);
         String interParam = interParams.get(random.nextInt(interParams.size()));
         List<Object> param = (List<Object>) apiParamDictionary.get(interParam);
         sb.append("&").append(interParam).append(":").append(param.get(random.nextInt(param.size())));
         return sb.toString();
+    }
+
+    public String generateSubSetValue(List<String> interParams, String sourceParam) {
+        int randomInt = random.nextInt(2);
+        if (randomInt == 1) {
+            return generateSubSetValueByAddMoreParam(interParams, sourceParam);
+        }
+        return generateSubSetValueByAddRandomValue(sourceParam);
     }
 }

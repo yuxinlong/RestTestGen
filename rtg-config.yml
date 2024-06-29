@@ -1,2 +1,2 @@
-apiUnderTest: spotify
+apiUnderTest: youtube
 strategyClassName: PartitionQueryTestStrategy

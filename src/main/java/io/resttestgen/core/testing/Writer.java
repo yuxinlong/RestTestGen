@@ -34,6 +34,11 @@ public abstract class Writer {
         return configuration.getOutputPath() + configuration.getTestingSessionName() + "/" + getOutputFormatName() +
                 "/" + metaMorphicTestStrategy + "/";
     }
+    public String getMetaMorphicTestErrorResultOutPutPAth(String metaMorphicTestStrategy,String operatorName){
+        return configuration.getOutputPath() + configuration.getTestingSessionName() + "/" + getOutputFormatName() +
+                "/" + operatorName + "/" + metaMorphicTestStrategy + "Error" + "/";
+    }
+    
 
     /**
      * Returns a suggested file name for the sequence to be written, based on the sequence name.

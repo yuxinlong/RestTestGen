@@ -8,6 +8,12 @@ public class ApiParamConfiguration {
     private Map<String, Object> valueMap;
     private Map<String,List<String>> subset;
     private Map<String,List<String>> partition;
+    private List<String> equality;
+
+    public List<String> getEquality() {
+        return equality;
+    }
+
     public Map<String, List<String>> getSubset() {
         return subset;
     }
@@ -25,7 +31,12 @@ public class ApiParamConfiguration {
         valueMap = new HashMap<>();
         valueMap.putAll(apiParamMap);
         subset = (Map<String, List<String>>)valueMap.get("subset");
-        partition = (Map<String, List<String>>)valueMap.get("subset");
+        partition = (Map<String, List<String>>)valueMap.get("partition");
+        equality = (List<String>)valueMap.get("equality");
+
+    }
+    public String getTotalParamName(){
+        return (String)valueMap.get("total");
     }
 
 }

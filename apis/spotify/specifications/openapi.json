@@ -4745,11 +4745,13 @@
       "get": {
         "description": "Get Spotify catalog information about albums, artists, playlists, tracks, shows, episodes or audiobooks\nthat match a keyword string.\u003cbr /\u003e\n**Note: Audiobooks are only available for the US, UK, Ireland, New Zealand and Australia markets.**\n",
         "operationId": "search",
+        "x-has-filter": true,
         "parameters": [
           {
             "in": "query",
             "name": "q",
             "required": true,
+            "x-is-filter": true,
             "schema": {
               "description": "Your search query.\n\nYou can narrow down your search using field filters. The available filters are `album`, `artist`, `track`, `year`, `upc`, `tag:hipster`, `tag:new`, `isrc`, and `genre`. Each field filter only applies to certain result types.\n\nThe `artist` and `year` filters can be used while searching albums, artists and tracks. You can filter on a single `year` or a range (e.g. 1955-1960).\u003cbr /\u003e\nThe `album` filter can be used while searching albums and tracks.\u003cbr /\u003e\nThe `genre` filter can be used while searching artists and tracks.\u003cbr /\u003e\nThe `isrc` and `track` filters can be used while searching tracks.\u003cbr /\u003e\nThe `upc`, `tag:new` and `tag:hipster` filters can only be used while searching albums. The `tag:new` filter will return albums released in the past two weeks and `tag:hipster` can be used to return only albums with the lowest 10% popularity.\u003cbr /\u003e\n",
               "example": "remaster%20track:Doxy%20artist:Miles%20Davis",
